@@ -12,7 +12,7 @@ pipeline {
                 sh "echo 'ConnectionStrings__DefaultConnection=server=192.168.1.128;port=3306;UserId=root;Password=vfhubnbx94AB;database=soft;Allow User Variables=true' > ./CharlieBackend.Api/.env"
             }
         }
-        stage("ls") {
+        stage("docker build and push to ecr") {
 			steps {
                 script {
                     docker.withRegistry(
