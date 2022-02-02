@@ -11,6 +11,15 @@ pipeline {
 		stage("create .env") {
 			steps {
                 sh "echo 'ConnectionStrings__DefaultConnection=server=192.168.1.128;port=3306;UserId=root;Password=vfhubnbx94AB;database=soft;Allow User Variables=true' > ./CharlieBackend.Api/.env"
+                sh "echo 'ConnectionStrings__DefaultConnection=server=192.168.1.128;port=3306;UserId=root;Password=vfhubnbx94AB;database=soft;Allow User Variables=true' >> ./CharlieBackend.Api/.env"
+                sh "echo 'ConnectionStrings__RabbitMQ=host=kangaroo.rmq.cloudamqp.com;virtualHost=cfhrvrrt;username=cfhrvrrt;password=yYvcHUcFxTsHGm51j4GtpA3mFguNv065 ' >> ./CharlieBackend.Api/.env"
+                sh "echo 'ConnectionStrings__AzureBlobsAccessKey=DefaultEndpointsProtocol=https;AccountName=csb10032000fbf86473;AccountKey=3Naz0PXXBe0Lie7HV51jdZsSFCqThDMsqGWdENueI/d2OoV14j6o9Hh0lY1TvAtM8g0VIuPQLDDmEruu951NZA==;EndpointSuffix=core.windows.net' >> ./CharlieBackend.Api/.env"
+                sh "echo 'BotSettings__Url=https://963c-188-163-45-170.ngrok.io' >> ./CharlieBackend.Api/.env"
+                sh "echo 'BotSettings__Key=1945675656:AAF5rVHswcwa8-xIZLS4DUlgFL2RW8mhrGM' >> ./CharlieBackend.Api/.env"
+                sh "echo 'BotSettings__Name=whatnotification_bot' >> ./CharlieBackend.Api/.env"
+                sh "echo 'AuthOptions__KEY=mysupersecret_secretkey!123' >> ./CharlieBackend.Api/.env"
+                sh "echo 'CredentialsSendersSettings__email=WhatITAcademy@gmail.com' >> ./CharlieBackend.Api/.env"
+                sh "echo 'CredentialsSendersSettings__password=sseta2551fgya1235' >> ./CharlieBackend.Api/.env"
             }
         }
         stage("docker build and push to ecr") {
