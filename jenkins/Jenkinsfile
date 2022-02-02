@@ -7,5 +7,22 @@ pipeline {
                 sh "ls"
             }
         }
+		stage("create .env") {
+			steps {
+                sh "echo 'ConnectionStrings__DefaultConnection=server=192.168.1.128;port=3306;UserId=root;Password=vfhubnbx94AB;database=soft;Allow User Variables=true' > ./CharlieBackend.Api/.env"
+            }
+        }
+        stage("ls") {
+			steps {
+                script {
+                    docker.withRegistry(
+                        'https://934086672967.dkr.ecr.eu-central-1.amazonaws.com',
+                        'ecr:eu-central-1:aws_creds') {
+                            def myImage = docker.build('what-backend-release-ecr')
+                        myImage.push('tag_001')
+                    )
+                }
+            }
+        }
     }
 }
