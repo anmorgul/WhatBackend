@@ -43,7 +43,10 @@ pipeline {
 			steps {
                 script {
                     sh 'docker image prune -f'
-                    TAG = sh 'git log -1 --pretty=%h'
+                    TAG = sh (
+                        script: 'git log -1 --pretty=%h',
+                        returnStdout: true
+                    ).trim()
                     docker.withRegistry(
                         'https://934086672967.dkr.ecr.eu-central-1.amazonaws.com',
                         'ecr:eu-central-1:aws_creds') {
@@ -53,7 +56,7 @@ pipeline {
                 }
             }
         }
-        stage('Test') {
+        stage('docker launch') {
             agent {
                 ecs {
                     cloud 'aws_vpc'
@@ -61,7 +64,7 @@ pipeline {
                     inheritFrom 'aws_ecs_task'
                     cpu 256
                     memory 128
-                    image '934086672967.dkr.ecr.eu-central-1.amazonaws.com/what-backend-release-ecr:tag_001'
+                    image '934086672967.dkr.ecr.eu-central-1.amazonaws.com/what-backend-release-ecr:latest'
                     // image '$AWS_ACCOUNT.dkr.ecr.$AWS_REGION.amazonaws.com/jenkins/java8:2019.7.29-1'
                     // logDriver 'fluentd'
                     // logDriverOptions([[name: 'foo', value:'bar'], [name: 'bar', value: 'foo']])
