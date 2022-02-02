@@ -13,7 +13,7 @@ RUN dotnet restore
 WORKDIR /source/CharlieBackend.Api
 RUN dotnet build ./CharlieBackend.Api.csproj --configuration Release
 RUN dotnet publish -c release -o /app --no-restore
-#COPY ./.aspnet/.env_api /app/.env
+COPY ./CharlieBackend.Api/.env /app/.env
 
 # final stage/image
 #FROM mcr.microsoft.com/dotnet/aspnet:3.0
