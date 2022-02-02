@@ -20,6 +20,7 @@ pipeline {
                         'ecr:eu-central-1:aws_creds') {
                             def myImage = docker.build('what-backend-release-ecr')
                         myImage.push('tag_001')
+                    }
                 }
             }
         }
