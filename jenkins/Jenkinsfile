@@ -5,7 +5,7 @@ pipeline {
 		stage("ls") {
 			steps {
                 sh "ls"
-                sh "cp ./jenkins.Dockerfile.api ./Dockerfile" 
+                sh "cp ./jenkins/Dockerfile.api ./Dockerfile" 
             }
         }
 		stage("create .env") {
