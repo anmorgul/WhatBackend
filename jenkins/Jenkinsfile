@@ -43,7 +43,7 @@ pipeline {
 			steps {
                 script {
                     docker image prune -f
-                    TAG = git log -1 --pretty=%h
+                    TAG = sh 'git log -1 --pretty=%h'
                     docker.withRegistry(
                         'https://934086672967.dkr.ecr.eu-central-1.amazonaws.com',
                         'ecr:eu-central-1:aws_creds') {
