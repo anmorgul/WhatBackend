@@ -4,7 +4,7 @@ WORKDIR /source
 
 # copy csproj and restore as distinct layers
 #COPY *.sln .
-COPY ../ ./
+COPY . ./
 COPY CharlieBackend.Api/*.csproj ./CharlieBackend.Api/
 RUN dotnet restore
 
