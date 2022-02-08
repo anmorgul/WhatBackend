@@ -60,10 +60,10 @@ pipeline {
                 ecs {
                     cloud 'aws_vpc'
                     // 'label-of-my-preconfigured-template':
-                    inheritFrom 'aws_ecs_task'
+                    inheritFrom 'what-backend-task'
                     cpu 256
                     memory 128
-                    image '934086672967.dkr.ecr.eu-central-1.amazonaws.com/what-backend-release-ecr:latest'
+                    image '934086672967.dkr.ecr.eu-central-1.amazonaws.com/what-backend-release-ecr'
                     // image '$AWS_ACCOUNT.dkr.ecr.$AWS_REGION.amazonaws.com/jenkins/java8:2019.7.29-1'
                     // logDriver 'fluentd'
                     // logDriverOptions([[name: 'foo', value:'bar'], [name: 'bar', value: 'foo']])
