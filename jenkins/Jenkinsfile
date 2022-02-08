@@ -55,6 +55,13 @@ pipeline {
         //         }
         //     }
         // }
+        stage('testdockrecs') {
+            agent { label 'ECS_agent_template1'}
+                steps {
+                    echo 'Running build'
+                }
+        }
+        
         stage('docker launch') {
             agent {
                 ecs {
