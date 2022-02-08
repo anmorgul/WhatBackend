@@ -58,7 +58,7 @@ pipeline {
         stage('docker launch') {
             agent {
                 ecs {
-                    cloud 'MyEC2cloudName'
+                    cloud 'what-backend-vpc'
                     // 'label-of-my-preconfigured-template':
                     inheritFrom 'what2'
                     launchType 'FARGATE'
