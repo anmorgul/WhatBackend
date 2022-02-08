@@ -58,7 +58,7 @@ pipeline {
         stage('docker launch') {
             agent {
                 ecs {
-                    cloud 'aws_vpc'
+                    cloud 'what-backend-vpc'
                     // 'label-of-my-preconfigured-template':
                     inheritFrom 'what-backend-task'
                     cpu 256
