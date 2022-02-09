@@ -71,7 +71,7 @@ pipeline {
                     launchType 'FARGATE'
                     cpu 256
                     memory 512
-                    sudo yum install nodejs npm --enablerepo=epel
+                    // sudo yum install nodejs npm --enablerepo=epel
                     // label 'what-backend-vpc'
                     image '934086672967.dkr.ecr.eu-central-1.amazonaws.com/what-backend-release-ecr'
                     // image '$AWS_ACCOUNT.dkr.ecr.$AWS_REGION.amazonaws.com/jenkins/java8:2019.7.29-1'
