@@ -6,7 +6,7 @@ pipeline {
 		CDD_APPLICATION_VERSION_NAME = "${env.GIT_BRANCH}"
 		template_msg = "*Build* $JOB_NAME"
     }
-	agent { label 'main'}
+	agent { label 'nodejs'}
 // { label 'nodejs'}
 	stages {
 		stage("ls") {
