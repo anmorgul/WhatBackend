@@ -8,22 +8,6 @@
         }
       ],
       "cpu": 256,
-      "environment": [
-        {
-          "name": "MANAGEMENT_SERVER_PORT",
-          "value": "5001"
-        },
-        {
-          "name": "SERVER_PORT",
-          "value": "5000"
-        }
-      ],
-      "secrets": [
-        {
-          "valueFrom": "ch-dev-user-db-password",
-          "name": "SPRING_DATASOURCE_PASSWORD"
-        }
-      ],
       "memory": 512,
       "image": "934086672967.dkr.ecr.eu-central-1.amazonaws.com/what-backend-release-ecr:latest",
       "essential": true,
