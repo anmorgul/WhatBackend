@@ -90,18 +90,18 @@ pipeline {
                 }
             }
         }
-        stage('test aws cli') {
-            steps {
-                withCredentials([[
-                    $class: 'AmazonWebServicesCredentialsBinding',
-                    credentialsId: 'aws_creds',
-                    // credentialsId: env.AWS_CREDENTIAL_ID,
-                    ACCESS_KEY: 'ACCESS_KEY', SECRET_KEY: 'SECRET_KEY'
-                    ]]) { 
-                    sh aws 
-                }
-            }
-        }
+        // stage('test aws cli') {
+        //     steps {
+        //         withCredentials([[
+        //             $class: 'AmazonWebServicesCredentialsBinding',
+        //             credentialsId: 'aws_creds',
+        //             // credentialsId: env.AWS_CREDENTIAL_ID,
+        //             ACCESS_KEY: 'ACCESS_KEY', SECRET_KEY: 'SECRET_KEY'
+        //             ]]) { 
+        //             sh aws 
+        //         }
+        //     }
+        // }
         // stage('testdockrecs') {
         //     agent { label 'ECS_agent_template1'}
         //         steps {
