@@ -7,7 +7,7 @@ pipeline {
 		template_msg = "*Build* $JOB_NAME"
         AWS_ECR_REGION = "eu-central-1"
         AWS_ECS_TASK_DEFINITION = "what-backend-task"
-        AWS_ECS_EXECUTION_ROL = "arn:aws:iam::934086672967:role/aws-service-role/ecs.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_ECSService" 
+        AWS_ECS_EXECUTION_ROL = "AWSServiceRoleForApplicationAutoScaling_ECSService" 
         AWS_ECS_COMPATIBILITY = "FARGATE"
         AWS_ECS_NETWORK_MODE = "awsvpc"
         AWS_ECS_CPU = '256'
