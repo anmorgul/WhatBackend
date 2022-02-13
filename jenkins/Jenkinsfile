@@ -12,7 +12,7 @@ pipeline {
         AWS_ECS_NETWORK_MODE = "awsvpc"
         AWS_ECS_CPU = '256'
         AWS_ECS_MEMORY = '512'
-        AWS_ECS_TASK_DEFINITION_PATH = './ecs/container-definition-update-image.json'
+        AWS_ECS_TASK_DEFINITION_PATH = './jenkins/ecs/container-definition-update-image.json'
         AWS_ECS_CLUSTER = 'what-backend-release-cluster'
         AWS_ECS_SERVICE = 'what-backend-release-ecs-service'
         AWS_ECR_URL = '934086672967.dkr.ecr.eu-central-1.amazonaws.com/what-backend-release-ecr'
