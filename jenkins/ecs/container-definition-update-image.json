@@ -1,0 +1,47 @@
+[
+    {
+      "portMappings": [
+        {
+          "hostPort": 5000,
+          "protocol": "tcp",
+          "containerPort": 5000
+        },
+        {
+          "hostPort": 5001,
+          "protocol": "tcp",
+          "containerPort": 5001
+        }
+      ],
+      "cpu": 256,
+      "environment": [
+        {
+          "name": "MANAGEMENT_SERVER_PORT",
+          "value": "5001"
+        },
+        {
+          "name": "SERVER_PORT",
+          "value": "5000"
+        }
+      ],
+      "secrets": [
+        {
+          "valueFrom": "ch-dev-user-db-password",
+          "name": "SPRING_DATASOURCE_PASSWORD"
+        }
+      ],
+      "memory": 512,
+      "image": "",
+      "healthCheck": {
+        "retries": 3,
+        "command": [
+          "CMD-SHELL",
+          "curl -f http://localhost:5001/actuator/health || exit 1"
+        ],
+        "timeout": 5,
+        "interval": 30,
+        "startPeriod": 60
+      },
+      "essential": true,
+      "name": "userApi"
+    }
+]
