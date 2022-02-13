@@ -6,7 +6,7 @@ pipeline {
 		CDD_APPLICATION_VERSION_NAME = "${env.GIT_BRANCH}"
 		template_msg = "*Build* $JOB_NAME"
         AWS_ECR_REGION = "eu-central-1"
-        AWS_ECS_TASK_DEFINITION = "what-backend-task:88"
+        AWS_ECS_TASK_DEFINITION = "what-backend-task"
         AWS_ECS_EXECUTION_ROL = "what-backend-execution-task-role" 
         AWS_ECS_COMPATIBILITY = "FARGATE"
         AWS_ECS_NETWORK_MODE = "awsvpc"
