@@ -38,29 +38,38 @@ pipeline {
                 sh "echo 'CredentialsSendersSettings__password=sseta2551fgya1235' >> ./CharlieBackend.Api/.env"
             }
         }
-        stage("docker build and push to ecr") {
-			steps {
-                script {
-                    sh 'docker image prune -f'
-                    TAG = sh (
-                        script: 'git log -1 --pretty=%h',
-                        returnStdout: true
-                    ).trim()
-                    docker.withRegistry(
-                        'https://934086672967.dkr.ecr.eu-central-1.amazonaws.com',
-                        'ecr:eu-central-1:aws_creds') {
-                            def myImage = docker.build('what-backend-release-ecr')
-                        myImage.push(TAG)
-                    }
+        // stage("docker build and push to ecr") {
+		// 	steps {
+        //         script {
+        //             sh 'docker image prune -f'
+        //             TAG = sh (
+        //                 script: 'git log -1 --pretty=%h',
+        //                 returnStdout: true
+        //             ).trim()
+        //             docker.withRegistry(
+        //                 'https://934086672967.dkr.ecr.eu-central-1.amazonaws.com',
+        //                 'ecr:eu-central-1:aws_creds') {
+        //                     def myImage = docker.build('what-backend-release-ecr')
+        //                 myImage.push(TAG)
+        //             }
+        //         }
+        //     }
+        // }
+        stage('test aws cli') {
+            steps {
+                withCredentials([
+                    string(credentialsId: 'aws_creds', variable: 'aws_creds'),
+                ]) {
+                    sh aws 
                 }
             }
         }
-        stage('testdockrecs') {
-            agent { label 'ECS_agent_template1'}
-                steps {
-                    echo 'Running build'
-                }
-        }
+        // stage('testdockrecs') {
+        //     agent { label 'ECS_agent_template1'}
+        //         steps {
+        //             echo 'Running build'
+        //         }
+        // }
         
         // stage('docker launch') {
         //     agent {
