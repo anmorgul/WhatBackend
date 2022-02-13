@@ -26,17 +26,7 @@
       ],
       "memory": 512,
       "image": "934086672967.dkr.ecr.eu-central-1.amazonaws.com/what-backend-release-ecr:latest",
-      "healthCheck": {
-        "retries": 3,
-        "command": [
-          "CMD-SHELL",
-          "curl -f http://localhost:5001/actuator/health || exit 1"
-        ],
-        "timeout": 5,
-        "interval": 30,
-        "startPeriod": 60
-      },
       "essential": true,
-      "name": "userApi"
+      "name": "what-backend-release-container"
     }
 ]
