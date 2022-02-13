@@ -57,9 +57,12 @@ pipeline {
         // }
         stage('test aws cli') {
             steps {
-                withCredentials([
-                    string(credentialsId: 'aws_creds', variable: 'aws_creds'),
-                ]) {
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws_creds',
+                    // credentialsId: env.AWS_CREDENTIAL_ID,
+                    ACCESS_KEY: 'ACCESS_KEY', SECRET_KEY: 'SECRET_KEY'
+                    ]]) { 
                     sh aws 
                 }
             }
