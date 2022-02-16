@@ -23,6 +23,14 @@ pipeline {
 	agent { label 'nodejs'}
 // { label 'nodejs'}
 	stages {
+        stage("rdb") {
+            steps {
+                script {
+                    aws rds describe-db-instances \
+                        --query "*[].[DBInstanceIdentifier,Endpoint.Address,Endpoint.Port,MasterUsername]"
+                }
+            }
+        }
 		stage("ls") {
 			steps {
                 sh "ls"
