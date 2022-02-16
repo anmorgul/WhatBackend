@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /source
 COPY . .
 RUN ls
-COPY jenkins/ecs/entrypoint.sh /app/entrypoint.sh
+COPY ./entrypoint.sh /app/entrypoint.sh
 RUN dotnet restore
 WORKDIR /source/CharlieBackend.Panel
 RUN dotnet build ./CharlieBackend.Panel.csproj --configuration Release

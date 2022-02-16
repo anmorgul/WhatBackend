@@ -85,6 +85,8 @@ pipeline {
                     sh "ls"
                     sh 'docker image prune -a -f'
                     sh "cp ./jenkins/Dockerfile.panel ./Dockerfile"
+                    sh "cp ./jenkins/entrypoint.sh ./entrypoint.sh"
+
                     TAG = sh (
                         script: 'git log -1 --pretty=%h',
                         returnStdout: true
