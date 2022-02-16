@@ -1,14 +1,15 @@
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /source
 COPY . .
-
+RUN ls
+COPY jenkins/ecs/entrypoint.sh /app/entrypoint.sh
 RUN dotnet restore
 WORKDIR /source/CharlieBackend.Panel
 RUN dotnet build ./CharlieBackend.Panel.csproj --configuration Release
 RUN dotnet publish -c release -o /app --no-restore
 RUN touch /app/.env
-RUN ls
-COPY jenkins/ecs/entrypoint.sh /app/entrypoint.sh
+
+
      
 
 RUN chmod 755 /app/entrypoint.sh
