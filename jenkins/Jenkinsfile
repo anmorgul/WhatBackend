@@ -1,8 +1,8 @@
 pipeline {
-    parameters {
-        string(name: 'rdburl', defaultValue: '')
-        string(name: 'rdbport', defaultValue: '')
-    }
+    // parameters {
+    //     string(name: 'rdburl', defaultValue: '')
+    //     string(name: 'rdbport', defaultValue: '')
+    // }
     environment {
 		telegramToken = credentials('telegramToken')
 		telegram_bot_name = credentials('telegram_bot_name')
@@ -27,6 +27,8 @@ pipeline {
         DB_PASSWORD = 'DB_PASSWORD'
         DATABASE = 'soft'
         APIURL = "http://18.197.120.182:80"
+        rdburl = ""
+        rdbport = ""
     }
 	agent { label 'nodejs'}
 // { label 'nodejs'}
