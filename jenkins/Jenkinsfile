@@ -122,7 +122,7 @@ pipeline {
                         sh "sed -i 's/DATABASE/${DATABASE}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
                         sh "sed -i 's/DB_PASSWORD/${DB_PASSWORD}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
                         sh "sed -i 's/DB_USERNAME/${DB_USERNAME}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
-                        sh "sed -i 's/url_api/${APIURL}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
+                        sh "sed -i 's|url_api|${APIURL}|' ${AWS_ECS_TASK_DEFINITION_PATH} "
                         
                         sh '''
                             /usr/local/bin/aws ecs register-task-definition \
