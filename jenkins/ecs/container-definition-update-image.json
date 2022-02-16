@@ -16,7 +16,7 @@
         { "name" : "AuthOptions__KEY", 
           "value" : "mysupersecret_secretkey!123" },
         { "name" : "ConnectionStrings__DefaultConnection", 
-          "value" : "server=192.168.1.128;port=3306;UserId=root;Password=vfhubnbx94AB;database=soft;Allow User Variables=true" },
+          "value" : "server=mysqlinstance.cgdizvert0bq.eu-central-1.rds.amazonaws.com;port=3306;UserId=DB_USERNAME;Password=DB_PASSWORD;database=soft;Allow User Variables=true" },
         { "name" : "ConnectionStrings__RabbitMQ", 
           "value" : "host=qkangaroo.rmq.cloudamqp.com;virtualHost=cfhrvrrt;username=cfhrvrrt;password=yYvcHUcFxTsHGm51j4GtpA3mFguNv065" }
     ]
