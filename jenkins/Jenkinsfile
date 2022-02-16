@@ -87,8 +87,8 @@ pipeline {
                         sh "echo ${taskRevision}"
                         sh "echo ${containerTag}"
                         sh """
-                            sed 's/qw/we' ${AWS_ECS_TASK_DEFINITION_PATH} 
-                            #sed 's/containerTag/${containerTag}' ${AWS_ECS_TASK_DEFINITION_PATH} 
+                            sed -e 's/qw/we' ${AWS_ECS_TASK_DEFINITION_PATH} 
+                            
                         """
                         sh("/usr/local/bin/aws ecs update-service \
                             --cluster ${AWS_ECS_CLUSTER} \
@@ -103,3 +103,4 @@ pipeline {
 }
 //                             --container-definitions file://${AWS_ECS_TASK_DEFINITION_PATH}
 // def taskRevision2 = sh(script: "/usr/local/bin/aws ecs describe-task-definition --task-definition ${AWS_ECS_TASK_DEFINITION} | egrep \"revision\"" )
+//#sed 's/containerTag/${containerTag}' ${AWS_ECS_TASK_DEFINITION_PATH} 
