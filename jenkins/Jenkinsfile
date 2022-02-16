@@ -33,6 +33,19 @@ pipeline {
                 }
             }
         }
+        stage("rdb2") {
+            steps {
+                withAWS(credentials: 'aws_creds', region: 'eu-central-1') {
+                    script {
+                        def rdbjson2 = sh('/usr/local/bin/aws rds describe-db-instances \
+                            --region eu-central-1 \
+                            --db-instance-identifier mysqlinstance \
+                            --query "DBInstances[*].[DBInstanceIdentifier,Endpoint.Address,Endpoint.Port,MasterUsername]"')
+                        sh "echo ${rdbjson2}"
+                    }
+                }
+            }
+        }
 		stage("ls") {
 			steps {
                 sh "ls"
