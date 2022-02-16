@@ -19,40 +19,16 @@ pipeline {
         AWS_ECS_SERVICE = 'what-backend-release-ecs-service'
         AWS_ECS_PANEL_SERVICE = 'what-backend-release-ecs-panel-service'
         AWS_ECR_URL = '934086672967.dkr.ecr.eu-central-1.amazonaws.com/what-backend-release-ecr'
+        DB_USERNAME = 'DB_USERNAME'
+        DB_PASSWORD = 'DB_PASSWORD'
+        DATABASE = 'soft'
     }
 	agent { label 'nodejs'}
 // { label 'nodejs'}
 	stages {
-        stage("rdb") {
-            steps {
-                withAWS(credentials: 'aws_creds', region: 'eu-central-1') {
-                    script {
-                        def mysqlinstance = 'mysqlinstance'
-                        def rdbjson = sh(script: "/usr/local/bin/aws rds describe-db-instances --query 'DBInstances[*].[DBInstanceIdentifier,Endpoint.Address,Endpoint.Port,MasterUsername]'", returnStdout: true)
-                        def jsonObj = readJSON text: rdbjson
-                        sh "echo ${jsonObj[0]}"
-                    }
-                }
-            }
-        }
-        stage("rdb2") {
-            steps {
-                withAWS(credentials: 'aws_creds', region: 'eu-central-1') {
-                    script {
-                        def rdbjson2 = sh(script: "/usr/local/bin/aws rds describe-db-instances \
-                            --region eu-central-1 \
-                            --db-instance-identifier mysqlinstance \
-                            --query 'DBInstances[*].[DBInstanceIdentifier,Endpoint]'", returnStdout: true)
-                        def jsonObj2 = readJSON text: rdbjson2
-                        sh "echo ${jsonObj2[0][1].Address}"
-                        sh "echo ${jsonObj2[0].mysqlinstance}"
-                    }
-                }
-            }
-        }
+
 		stage("ls") {
 			steps {
-                sh "ls"
                 withCredentials([
 					string(credentialsId: 'telegramToken', variable: 'telegramToken'),
 					string(credentialsId: 'telegram_bot_name', variable: 'telegram_bot_name'),
@@ -62,9 +38,26 @@ pipeline {
 					  	-d chat_id=$telegram_channel_id \
 						-d parse_mode=markdown \
 						-d text="*Build:*\n${JOB_NAME}\n*Process*:[JOB_DISPLAY](${JOB_DISPLAY_URL})\n${JOB_DISPLAY_URL}\n*Git commit:*\n${GIT_COMMIT}"')
+                }
+            }
+        }   
+        stage("rdb") {
+            steps {
+                withAWS(credentials: 'aws_creds', region: 'eu-central-1') {
+                    script {
+                        def rdbjson2 = sh(script: "/usr/local/bin/aws rds describe-db-instances \
+                            --region eu-central-1 \
+                            --db-instance-identifier mysqlinstance \
+                            --query 'DBInstances[*].[DBInstanceIdentifier,Endpoint]'", returnStdout: true)
+                        def jsonObj2 = readJSON text: rdbjson2
+                        def rdburl = sh(script: "echo ${jsonObj2[0][1].Address}", returnStdout: true)
+                        def rdbport = sh(script: "echo ${jsonObj2[0][1].Port}", returnStdout: true)
+                        sh "echo rdb Address = ${rdburl}"
+                        sh "echo rdb Port = ${rdbport}"
                     }
                 }
-            }   
+            }
+        }
 		// stage("create .env") {
 		// 	steps {
         //         sh "echo 'ConnectionStrings__DefaultConnection=server=mysqlinstance.cgdizvert0bq.eu-central-1.rds.amazonaws.com;port=3306;UserId=DB_USERNAME;Password=DB_PASSWORD;database=soft;Allow User Variables=true' > ./CharlieBackend.Api/.env"
@@ -124,6 +117,11 @@ pipeline {
         //                 def containerTag = sh(script: "/usr/local/bin/aws ecr describe-images --repository-name 'what-backend-release-ecr' --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' --output text", returnStdout: true).trim()
         //                 // def containerTag = containerTag.trim()
         //                 sh "sed -i 's/containerTag/${containerTag}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
+        //                 sh "sed -i 's/rdburl/${rdburl}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
+        //                 sh "sed -i 's/rdbport/${rdbport}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
+                        // sh "sed -i 's/DATABASE/${DATABASE}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
+                        // sh "sed -i 's/DB_PASSWORD/${DB_PASSWORD}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
+                        // sh "sed -i 's/DB_USERNAME/${DB_USERNAME}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
         //                 sh '''
         //                     /usr/local/bin/aws ecs register-task-definition \
         //                         --region ${AWS_ECR_REGION} \

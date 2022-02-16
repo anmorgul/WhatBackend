@@ -22,7 +22,9 @@
       },
       "environment" : [
         { "name" : "Cookies__SecureKey", 
-          "value" : "MyVerySecretKey" }
+          "value" : "MyVerySecretKey" },
+        { "name" : "ASPNETCORE_ENVIRONMENT",
+          "value" : "prod"}
     ]
     }
 ]
