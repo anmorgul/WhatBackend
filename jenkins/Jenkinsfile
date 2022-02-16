@@ -71,7 +71,8 @@ pipeline {
                 withAWS(credentials: 'aws_creds', region: 'eu-central-1') {
                     script {
                         sh('ls')
-                        sh("/usr/local/bin/aws ecs register-task-definition \
+                        sh '''
+                            /usr/local/bin/aws ecs register-task-definition \
                             --region ${AWS_ECR_REGION} \
                             --family ${AWS_ECS_TASK_DEFINITION} \
                             --execution-role-arn ${AWS_ECS_EXECUTION_ROL} \
@@ -104,7 +105,8 @@ pipeline {
                                 ]
                                 }
                             ]
-                            DEFINITION ")
+DEFINITION 
+                        '''
                         def taskRevision = sh(script: "/usr/local/bin/aws ecs describe-task-definition --task-definition ${AWS_ECS_TASK_DEFINITION} | egrep \"revision\" | tr \"/\" \" \" | awk '{print \$2}' | sed 's/\"\$//'", returnStdout: true)
                         sh("/usr/local/bin/aws ecs update-service \
                             --cluster ${AWS_ECS_CLUSTER} \
