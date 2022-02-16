@@ -7,14 +7,17 @@ pipeline {
 		template_msg = "*Build* $JOB_NAME"
         AWS_ECR_REGION = "eu-central-1"
         AWS_ECS_TASK_DEFINITION = "what-backend-task"
+        AWS_ECS_PANEL_TASK_DEFINITION = "what-backend-panel-task"
         AWS_ECS_EXECUTION_ROL = "what-backend-execution-task-role" 
         AWS_ECS_COMPATIBILITY = "FARGATE"
         AWS_ECS_NETWORK_MODE = "awsvpc"
         AWS_ECS_CPU = '256'
         AWS_ECS_MEMORY = '512'
         AWS_ECS_TASK_DEFINITION_PATH = './jenkins/ecs/container-definition-update-image.json'
+        AWS_ECS_PANEL_TASK_DEFINITION_PATH = './jenkins/ecs/container-definition-update-image-panel.json'
         AWS_ECS_CLUSTER = 'what-backend-release-cluster'
         AWS_ECS_SERVICE = 'what-backend-release-ecs-service'
+        AWS_ECS_PANEL_SERVICE = 'what-backend-release-ecs-panel-service'
         AWS_ECR_URL = '934086672967.dkr.ecr.eu-central-1.amazonaws.com/what-backend-release-ecr'
     }
 	agent { label 'nodejs'}
@@ -49,7 +52,7 @@ pipeline {
         //         sh "echo 'CredentialsSendersSettings__password=sseta2551fgya1235' >> ./CharlieBackend.Api/.env"
         //     }
         // }
-        // stage("docker build and push to ecr") {
+        // stage("docker build api and push to ecr") {
 		// 	steps {
         //         script {
         //             sh 'docker image prune -f'
@@ -66,7 +69,27 @@ pipeline {
         //         }
         //     }
         // }
-        stage('Deploy in ECS') {
+
+//
+        stage("docker build panel and push to ecr") {
+			steps {
+                script {
+                    sh 'docker image prune -f'
+                    TAG = sh (
+                        script: 'git log -1 --pretty=%h',
+                        returnStdout: true
+                    ).trim()
+                    docker.withRegistry(
+                        'https://934086672967.dkr.ecr.eu-central-1.amazonaws.com',
+                        'ecr:eu-central-1:aws_creds') {
+                            def myImage = docker.build('what-backend-release-panel-ecr')
+                        myImage.push(TAG)
+                    }
+                }
+            }
+        }
+//
+        stage('Deploy api in ECS') {
             steps {
                 withAWS(credentials: 'aws_creds', region: 'eu-central-1') {
                     script {
@@ -94,6 +117,36 @@ pipeline {
                 }
             }
         }
+//
+        stage('Deploy panel in ECS') {
+            steps {
+                withAWS(credentials: 'aws_creds', region: 'eu-central-1') {
+                    script {
+                        def containerTag = sh(script: "/usr/local/bin/aws ecr describe-images --repository-name 'what-backend-release-ecr' --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' --output text", returnStdout: true).trim()
+                        // def containerTag = containerTag.trim()
+                        sh "sed -i 's/containerTag/${containerTag}/' ${AWS_ECS_PANEL_TASK_DEFINITION_PATH} "
+                        sh '''
+                            /usr/local/bin/aws ecs register-task-definition \
+                                --region ${AWS_ECR_REGION} \
+                                --family ${AWS_ECS_PANEL_TASK_DEFINITION} \
+                                --execution-role-arn ${AWS_ECS_EXECUTION_ROL} \
+                                --requires-compatibilities ${AWS_ECS_COMPATIBILITY} \
+                                --network-mode ${AWS_ECS_NETWORK_MODE} \
+                                --cpu ${AWS_ECS_CPU} \
+                                --memory ${AWS_ECS_MEMORY} \
+                                --container-definitions file://${AWS_ECS_PANEL_TASK_DEFINITION_PATH} 
+                        '''
+                        def taskRevision = sh(script: "/usr/local/bin/aws ecs describe-task-definition --task-definition ${AWS_ECS_TASK_DEFINITION} | egrep \"revision\" | tr \"/\" \" \" | awk '{print \$2}' | sed 's/\"\$//'", returnStdout: true)
+                        sh("/usr/local/bin/aws ecs update-service \
+                            --cluster ${AWS_ECS_CLUSTER} \
+                            --service ${AWS_ECS_PANEL_SERVICE} \
+                            --task-definition ${AWS_ECS_PANEL_TASK_DEFINITION}")
+                        // :${taskRevision}
+                    }
+                }
+            }
+        }
+//
     }
 }
 //                             --container-definitions file://${AWS_ECS_TASK_DEFINITION_PATH}
