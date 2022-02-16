@@ -36,9 +36,8 @@ pipeline {
 						-d parse_mode=markdown \
 						-d text="*Build:*\n${JOB_NAME}\n*Process*:[JOB_DISPLAY](${JOB_DISPLAY_URL})\n${JOB_DISPLAY_URL}\n*Git commit:*\n${GIT_COMMIT}"')
                     }
-                sh "cp ./jenkins/Dockerfile.api ./Dockerfile" 
-            }
-        }
+                }
+            }   
 		// stage("create .env") {
 		// 	steps {
         //         sh "echo 'ConnectionStrings__DefaultConnection=server=mysqlinstance.cgdizvert0bq.eu-central-1.rds.amazonaws.com;port=3306;UserId=DB_USERNAME;Password=DB_PASSWORD;database=soft;Allow User Variables=true' > ./CharlieBackend.Api/.env"
@@ -56,6 +55,7 @@ pipeline {
 		// 	steps {
         //         script {
         //             sh 'docker image prune -f'
+        //             sh "cp ./jenkins/Dockerfile.api ./Dockerfile"
         //             TAG = sh (
         //                 script: 'git log -1 --pretty=%h',
         //                 returnStdout: true
@@ -75,6 +75,7 @@ pipeline {
 			steps {
                 script {
                     sh 'docker image prune -f'
+                    sh "cp ./jenkins/Dockerfile.panel ./Dockerfile"
                     TAG = sh (
                         script: 'git log -1 --pretty=%h',
                         returnStdout: true
@@ -122,7 +123,7 @@ pipeline {
             steps {
                 withAWS(credentials: 'aws_creds', region: 'eu-central-1') {
                     script {
-                        def containerTag = sh(script: "/usr/local/bin/aws ecr describe-images --repository-name 'what-backend-release-ecr' --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' --output text", returnStdout: true).trim()
+                        def containerTag = sh(script: "/usr/local/bin/aws ecr describe-images --repository-name 'what-backend-release-panel-ecr' --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' --output text", returnStdout: true).trim()
                         // def containerTag = containerTag.trim()
                         sh "sed -i 's/containerTag/${containerTag}/' ${AWS_ECS_PANEL_TASK_DEFINITION_PATH} "
                         sh '''
