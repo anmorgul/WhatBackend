@@ -57,8 +57,8 @@ pipeline {
                             --db-instance-identifier mysqlinstance \
                             --query 'DBInstances[*].[DBInstanceIdentifier,Endpoint]'", returnStdout: true)
                         def jsonObj2 = readJSON text: rdbjson2
-                        env.rdburl = sh(script: "echo ${jsonObj2[0][1].Address}", returnStdout: true).trim()
-                        env.rdbport = sh(script: "echo ${jsonObj2[0][1].Port}", returnStdout: true).trim()
+                        rdburl = sh(script: "echo ${jsonObj2[0][1].Address}", returnStdout: true).trim()
+                        rdbport = sh(script: "echo ${jsonObj2[0][1].Port}", returnStdout: true).trim()
                         sh "echo rdb Address = ${rdburl}"
                         sh "echo rdb Port = ${rdbport}"
                     }
@@ -119,8 +119,8 @@ pipeline {
         //                 sh "echo rdb Port = ${rdbport}"
         //                 sh "echo cont"
         //                 sh "sed -i 's/containerTag/${containerTag}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
-        //                 sh "sed -i 's/rdburl/${env.rdburl}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
-        //                 sh "sed -i 's/rdbport/${env.rdbport}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
+        //                 sh "sed -i 's/rdburl/${rdburl}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
+        //                 sh "sed -i 's/rdbport/${rdbport}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
         //                 sh "sed -i 's/DATABASE/${DATABASE}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
         //                 sh "sed -i 's/DB_PASSWORD/${DB_PASSWORD}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
         //                 sh "sed -i 's/DB_USERNAME/${DB_USERNAME}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
