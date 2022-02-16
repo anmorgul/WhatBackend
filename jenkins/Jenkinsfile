@@ -49,23 +49,23 @@ pipeline {
         //         sh "echo 'CredentialsSendersSettings__password=sseta2551fgya1235' >> ./CharlieBackend.Api/.env"
         //     }
         // }
-        stage("docker build and push to ecr") {
-			steps {
-                script {
-                    sh 'docker image prune -f'
-                    TAG = sh (
-                        script: 'git log -1 --pretty=%h',
-                        returnStdout: true
-                    ).trim()
-                    docker.withRegistry(
-                        'https://934086672967.dkr.ecr.eu-central-1.amazonaws.com',
-                        'ecr:eu-central-1:aws_creds') {
-                            def myImage = docker.build('what-backend-release-ecr')
-                        myImage.push(TAG)
-                    }
-                }
-            }
-        }
+        // stage("docker build and push to ecr") {
+		// 	steps {
+        //         script {
+        //             sh 'docker image prune -f'
+        //             TAG = sh (
+        //                 script: 'git log -1 --pretty=%h',
+        //                 returnStdout: true
+        //             ).trim()
+        //             docker.withRegistry(
+        //                 'https://934086672967.dkr.ecr.eu-central-1.amazonaws.com',
+        //                 'ecr:eu-central-1:aws_creds') {
+        //                     def myImage = docker.build('what-backend-release-ecr')
+        //                 myImage.push(TAG)
+        //             }
+        //         }
+        //     }
+        // }
         stage('Deploy in ECS') {
             steps {
                 withAWS(credentials: 'aws_creds', region: 'eu-central-1') {
@@ -73,39 +73,14 @@ pipeline {
                         sh('ls')
                         sh '''
                             /usr/local/bin/aws ecs register-task-definition \
-                            --region ${AWS_ECR_REGION} \
-                            --family ${AWS_ECS_TASK_DEFINITION} \
-                            --execution-role-arn ${AWS_ECS_EXECUTION_ROL} \
-                            --requires-compatibilities ${AWS_ECS_COMPATIBILITY} \
-                            --network-mode ${AWS_ECS_NETWORK_MODE} \
-                            --cpu ${AWS_ECS_CPU} \
-                            --memory ${AWS_ECS_MEMORY} \
-                            --container-definitions = <<DEFINITION
-                            [
-                                {
-                                "portMappings": [
-                                    {
-                                    "hostPort": 80,
-                                    "protocol": "tcp",
-                                    "containerPort": 80
-                                    }
-                                ],
-                                "cpu": 256,
-                                "memory": 512,
-                                "image": "934086672967.dkr.ecr.eu-central-1.amazonaws.com/what-backend-release-ecr:d66b31d",
-                                "essential": true,
-                                "name": "what-backend-release-container",
-                                "environment" : [
-                                    { "name" : "AuthOptions__KEY", 
-                                    "value" : "mysupersecret_secretkey!123" },
-                                    { "name" : "ConnectionStrings__DefaultConnection", 
-                                    "value" : "server=192.168.1.128;port=3306;UserId=root;Password=vfhubnbx94AB;database=soft;Allow User Variables=true" },
-                                    { "name" : "ConnectionStrings__RabbitMQ", 
-                                    "value" : "host=qkangaroo.rmq.cloudamqp.com;virtualHost=cfhrvrrt;username=cfhrvrrt;password=yYvcHUcFxTsHGm51j4GtpA3mFguNv065" }
-                                ]
-                                }
-                            ]
-DEFINITION 
+                                --region ${AWS_ECR_REGION} \
+                                --family ${AWS_ECS_TASK_DEFINITION} \
+                                --execution-role-arn ${AWS_ECS_EXECUTION_ROL} \
+                                --requires-compatibilities ${AWS_ECS_COMPATIBILITY} \
+                                --network-mode ${AWS_ECS_NETWORK_MODE} \
+                                --cpu ${AWS_ECS_CPU} \
+                                --memory ${AWS_ECS_MEMORY} \
+                                --container-definitions file://${AWS_ECS_TASK_DEFINITION_PATH} 
                         '''
                         def taskRevision = sh(script: "/usr/local/bin/aws ecs describe-task-definition --task-definition ${AWS_ECS_TASK_DEFINITION} | egrep \"revision\" | tr \"/\" \" \" | awk '{print \$2}' | sed 's/\"\$//'", returnStdout: true)
                         sh("/usr/local/bin/aws ecs update-service \
