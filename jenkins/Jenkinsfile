@@ -83,27 +83,27 @@ pipeline {
         // }
 
 //
-        stage("docker build panel and push to ecr") {
-			steps {
-                script {
-                    sh "ls"
-                    sh 'docker image prune -a -f'
-                    sh "cp ./jenkins/Dockerfile.panel ./Dockerfile"
-                    sh "cp ./jenkins/entrypoint.sh ./entrypoint.sh"
+        // stage("docker build panel and push to ecr") {
+		// 	steps {
+        //         script {
+        //             sh "ls"
+        //             sh 'docker image prune -a -f'
+        //             sh "cp ./jenkins/Dockerfile.panel ./Dockerfile"
+        //             sh "cp ./jenkins/entrypoint.sh ./entrypoint.sh"
 
-                    TAG = sh (
-                        script: 'git log -1 --pretty=%h',
-                        returnStdout: true
-                    ).trim()
-                    docker.withRegistry(
-                        'https://934086672967.dkr.ecr.eu-central-1.amazonaws.com',
-                        'ecr:eu-central-1:aws_creds') {
-                            def myImage = docker.build('what-backend-release-panel-ecr')
-                        myImage.push(TAG)
-                    }
-                }
-            }
-        }
+        //             TAG = sh (
+        //                 script: 'git log -1 --pretty=%h',
+        //                 returnStdout: true
+        //             ).trim()
+        //             docker.withRegistry(
+        //                 'https://934086672967.dkr.ecr.eu-central-1.amazonaws.com',
+        //                 'ecr:eu-central-1:aws_creds') {
+        //                     def myImage = docker.build('what-backend-release-panel-ecr')
+        //                 myImage.push(TAG)
+        //             }
+        //         }
+        //     }
+        // }
 //
         // stage('Deploy api in ECS') {
         //     steps {
@@ -122,7 +122,7 @@ pipeline {
         //                 sh "sed -i 's/DATABASE/${DATABASE}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
         //                 sh "sed -i 's/DB_PASSWORD/${DB_PASSWORD}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
         //                 sh "sed -i 's/DB_USERNAME/${DB_USERNAME}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
-        //                 sh "sed -i 's|url_api|${APIURL}|' ${AWS_ECS_TASK_DEFINITION_PATH} "
+        //                 
                         
         //                 sh '''
         //                     /usr/local/bin/aws ecs register-task-definition \
@@ -153,6 +153,7 @@ pipeline {
                         def containerTag = sh(script: "/usr/local/bin/aws ecr describe-images --repository-name 'what-backend-release-panel-ecr' --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' --output text", returnStdout: true).trim()
                         // def containerTag = containerTag.trim()
                         sh "sed -i 's/containerTag/${containerTag}/' ${AWS_ECS_PANEL_TASK_DEFINITION_PATH} "
+                        sh "sed -i 's|url_api|${APIURL}|' ${AWS_ECS_PANEL_TASK_DEFINITION_PATH} "
                         sh '''
                             /usr/local/bin/aws ecs register-task-definition \
                                 --region ${AWS_ECR_REGION} \
