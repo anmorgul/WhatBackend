@@ -87,7 +87,7 @@ pipeline {
                         sh "echo ${taskRevision}"
                         sh "echo ${containerTag}"
                         sh "cat ${AWS_ECS_TASK_DEFINITION_PATH}"
-                        sh "sed 's/containerTag/${containerTag}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
+                        sh "sed 's/containerTag/67330ff/' ${AWS_ECS_TASK_DEFINITION_PATH} "
                         sh("/usr/local/bin/aws ecs update-service \
                             --cluster ${AWS_ECS_CLUSTER} \
                             --service ${AWS_ECS_SERVICE} \
