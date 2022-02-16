@@ -1,4 +1,8 @@
 pipeline {
+    parameters {
+        string(name: 'rdburl', defaultValue: ''
+        string(name: 'rdbport', defaultValue: ''
+    }
     environment {
 		telegramToken = credentials('telegramToken')
 		telegram_bot_name = credentials('telegram_bot_name')
@@ -51,8 +55,8 @@ pipeline {
                             --db-instance-identifier mysqlinstance \
                             --query 'DBInstances[*].[DBInstanceIdentifier,Endpoint]'", returnStdout: true)
                         def jsonObj2 = readJSON text: rdbjson2
-                        def rdburl = sh(script: "echo ${jsonObj2[0][1].Address}", returnStdout: true)
-                        def rdbport = sh(script: "echo ${jsonObj2[0][1].Port}", returnStdout: true)
+                        env.rdburl = sh(script: "echo ${jsonObj2[0][1].Address}", returnStdout: true)
+                        env.rdbport = sh(script: "echo ${jsonObj2[0][1].Port}", returnStdout: true)
                         sh "echo rdb Address = ${rdburl}"
                         sh "echo rdb Port = ${rdbport}"
                     }
@@ -113,8 +117,8 @@ pipeline {
                         sh "echo rdb Port = ${rdbport}"
                         sh "echo cont"
                         sh "sed -i 's/containerTag/${containerTag}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
-                        sh "sed -i 's/rdburl/${rdburl}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
-                        sh "sed -i 's/rdbport/${rdbport}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
+                        sh "sed -i 's/rdburl/${env.rdburl}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
+                        sh "sed -i 's/rdbport/${env.rdbport}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
                         sh "sed -i 's/DATABASE/${DATABASE}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
                         sh "sed -i 's/DB_PASSWORD/${DB_PASSWORD}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
                         sh "sed -i 's/DB_USERNAME/${DB_USERNAME}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
