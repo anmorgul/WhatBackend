@@ -30,7 +30,7 @@ pipeline {
                         def mysqlinstance = 'mysqlinstance'
                         def rdbjson = sh(script: "/usr/local/bin/aws rds describe-db-instances --query 'DBInstances[*].[DBInstanceIdentifier,Endpoint.Address,Endpoint.Port,MasterUsername]'", returnStdout: true)
                         def jsonObj = readJSON text: rdbjson
-                        sh "echo ${jsonObj}"
+                        sh "echo ${jsonObj[0]}"
                     }
                 }
             }
