@@ -43,9 +43,8 @@ pipeline {
                             --region eu-central-1 \
                             --db-instance-identifier mysqlinstance \
                             --query 'DBInstances[*].[DBInstanceIdentifier,Endpoint]'", returnStdout: true)
-                        sh "echo ${rdbjson2}"
-                        def jsonObj = readJSON text: rdbjson2
-                        sh "echo ${jsonObj[0]}"
+                        def jsonObj2 = readJSON text: rdbjson2
+                        sh "echo ${jsonObj2[0]}"
                         sh "echo ${rdbjson2}"
                     }
                 }
