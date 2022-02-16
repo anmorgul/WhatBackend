@@ -77,7 +77,7 @@ pipeline {
                         sh "echo ${sedexpr}"
 
                         sh "cat ${AWS_ECS_TASK_DEFINITION_PATH}"
-                        sh "sed '${sedexpr}' ${AWS_ECS_TASK_DEFINITION_PATH} "
+                        sh "sed -i '${sedexpr}' ${AWS_ECS_TASK_DEFINITION_PATH} "
 
                         sh "cat ${AWS_ECS_TASK_DEFINITION_PATH}"
                         sh '''
