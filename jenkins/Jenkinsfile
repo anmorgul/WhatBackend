@@ -36,102 +36,85 @@ pipeline {
                 sh "cp ./jenkins/Dockerfile.api ./Dockerfile" 
             }
         }
-		stage("create .env") {
-			steps {
-                sh "echo 'ConnectionStrings__DefaultConnection=server=mysqlinstance.cgdizvert0bq.eu-central-1.rds.amazonaws.com;port=3306;UserId=DB_USERNAME;Password=DB_PASSWORD;database=soft;Allow User Variables=true' > ./CharlieBackend.Api/.env"
-                sh "echo 'ConnectionStrings__RabbitMQ=host=kangaroo.rmq.cloudamqp.com;virtualHost=cfhrvrrt;username=cfhrvrrt;password=yYvcHUcFxTsHGm51j4GtpA3mFguNv065' >> ./CharlieBackend.Api/.env"
-                sh "echo 'ConnectionStrings__AzureBlobsAccessKey=DefaultEndpointsProtocol=https;AccountName=csb10032000fbf86473;AccountKey=3Naz0PXXBe0Lie7HV51jdZsSFCqThDMsqGWdENueI/d2OoV14j6o9Hh0lY1TvAtM8g0VIuPQLDDmEruu951NZA==;EndpointSuffix=core.windows.net' >> ./CharlieBackend.Api/.env"
-                sh "echo 'BotSettings__Url=https://963c-188-163-45-170.ngrok.io' >> ./CharlieBackend.Api/.env"
-                sh "echo 'BotSettings__Key=1945675656:AAF5rVHswcwa8-xIZLS4DUlgFL2RW8mhrGM' >> ./CharlieBackend.Api/.env"
-                sh "echo 'BotSettings__Name=whatnotification_bot' >> ./CharlieBackend.Api/.env"
-                sh "echo 'AuthOptions__KEY=mysupersecret_secretkey!123' >> ./CharlieBackend.Api/.env"
-                sh "echo 'CredentialsSendersSettings__email=WhatITAcademy@gmail.com' >> ./CharlieBackend.Api/.env"
-                sh "echo 'CredentialsSendersSettings__password=sseta2551fgya1235' >> ./CharlieBackend.Api/.env"
-            }
-        }
-        // stage("docker build and push to ecr") {
+		// stage("create .env") {
 		// 	steps {
-        //         script {
-        //             sh 'docker image prune -f'
-        //             TAG = sh (
-        //                 script: 'git log -1 --pretty=%h',
-        //                 returnStdout: true
-        //             ).trim()
-        //             docker.withRegistry(
-        //                 'https://934086672967.dkr.ecr.eu-central-1.amazonaws.com',
-        //                 'ecr:eu-central-1:aws_creds') {
-        //                     def myImage = docker.build('what-backend-release-ecr')
-        //                 myImage.push(TAG)
-        //             }
-        //         }
+        //         sh "echo 'ConnectionStrings__DefaultConnection=server=mysqlinstance.cgdizvert0bq.eu-central-1.rds.amazonaws.com;port=3306;UserId=DB_USERNAME;Password=DB_PASSWORD;database=soft;Allow User Variables=true' > ./CharlieBackend.Api/.env"
+        //         sh "echo 'ConnectionStrings__RabbitMQ=host=kangaroo.rmq.cloudamqp.com;virtualHost=cfhrvrrt;username=cfhrvrrt;password=yYvcHUcFxTsHGm51j4GtpA3mFguNv065' >> ./CharlieBackend.Api/.env"
+        //         sh "echo 'ConnectionStrings__AzureBlobsAccessKey=DefaultEndpointsProtocol=https;AccountName=csb10032000fbf86473;AccountKey=3Naz0PXXBe0Lie7HV51jdZsSFCqThDMsqGWdENueI/d2OoV14j6o9Hh0lY1TvAtM8g0VIuPQLDDmEruu951NZA==;EndpointSuffix=core.windows.net' >> ./CharlieBackend.Api/.env"
+        //         sh "echo 'BotSettings__Url=https://963c-188-163-45-170.ngrok.io' >> ./CharlieBackend.Api/.env"
+        //         sh "echo 'BotSettings__Key=1945675656:AAF5rVHswcwa8-xIZLS4DUlgFL2RW8mhrGM' >> ./CharlieBackend.Api/.env"
+        //         sh "echo 'BotSettings__Name=whatnotification_bot' >> ./CharlieBackend.Api/.env"
+        //         sh "echo 'AuthOptions__KEY=mysupersecret_secretkey!123' >> ./CharlieBackend.Api/.env"
+        //         sh "echo 'CredentialsSendersSettings__email=WhatITAcademy@gmail.com' >> ./CharlieBackend.Api/.env"
+        //         sh "echo 'CredentialsSendersSettings__password=sseta2551fgya1235' >> ./CharlieBackend.Api/.env"
         //     }
         // }
+        stage("docker build and push to ecr") {
+			steps {
+                script {
+                    sh 'docker image prune -f'
+                    TAG = sh (
+                        script: 'git log -1 --pretty=%h',
+                        returnStdout: true
+                    ).trim()
+                    docker.withRegistry(
+                        'https://934086672967.dkr.ecr.eu-central-1.amazonaws.com',
+                        'ecr:eu-central-1:aws_creds') {
+                            def myImage = docker.build('what-backend-release-ecr')
+                        myImage.push(TAG)
+                    }
+                }
+            }
+        }
         stage('Deploy in ECS') {
             steps {
                 withAWS(credentials: 'aws_creds', region: 'eu-central-1') {
-                // withCredentials([
-                //                         credentialsId: 'aws_creds',
-                //     // credentialsId: env.AWS_CREDENTIAL_ID,
-                //     ACCESS_KEY: 'ACCESS_KEY', SECRET_KEY: 'SECRET_KEY'
-                //         // string(
-                //         // //     credentialsId: 'aws_creds', 
-                //         // //     variable: 'AWS_ECS_EXECUTION_ROL'),
-                //         // string(
-                //         //     credentialsId: 'AWS_REPOSITORY_URL_SECRET', 
-                //         //     variable: 'AWS_ECR_URL')
-                //             ]) {
                     script {
                         sh('ls')
-                        // updateContainerDefinitionJsonWithImageVersion()
-                        sh("/usr/local/bin/aws ecs register-task-definition --region ${AWS_ECR_REGION} --family ${AWS_ECS_TASK_DEFINITION} --execution-role-arn ${AWS_ECS_EXECUTION_ROL} --requires-compatibilities ${AWS_ECS_COMPATIBILITY} --network-mode ${AWS_ECS_NETWORK_MODE} --cpu ${AWS_ECS_CPU} --memory ${AWS_ECS_MEMORY} --container-definitions file://${AWS_ECS_TASK_DEFINITION_PATH}")
+                        sh("/usr/local/bin/aws ecs register-task-definition \
+                            --region ${AWS_ECR_REGION} \
+                            --family ${AWS_ECS_TASK_DEFINITION} \
+                            --execution-role-arn ${AWS_ECS_EXECUTION_ROL} \
+                            --requires-compatibilities ${AWS_ECS_COMPATIBILITY} \
+                            --network-mode ${AWS_ECS_NETWORK_MODE} \
+                            --cpu ${AWS_ECS_CPU} \
+                            --memory ${AWS_ECS_MEMORY} \
+                            --container-definitions = <<DEFINITION
+                            [
+                                {
+                                "portMappings": [
+                                    {
+                                    "hostPort": 80,
+                                    "protocol": "tcp",
+                                    "containerPort": 80
+                                    }
+                                ],
+                                "cpu": 256,
+                                "memory": 512,
+                                "image": "934086672967.dkr.ecr.eu-central-1.amazonaws.com/what-backend-release-ecr:d66b31d",
+                                "essential": true,
+                                "name": "what-backend-release-container",
+                                "environment" : [
+                                    { "name" : "AuthOptions__KEY", 
+                                    "value" : "mysupersecret_secretkey!123" },
+                                    { "name" : "ConnectionStrings__DefaultConnection", 
+                                    "value" : "server=192.168.1.128;port=3306;UserId=root;Password=vfhubnbx94AB;database=soft;Allow User Variables=true" },
+                                    { "name" : "ConnectionStrings__RabbitMQ", 
+                                    "value" : "host=qkangaroo.rmq.cloudamqp.com;virtualHost=cfhrvrrt;username=cfhrvrrt;password=yYvcHUcFxTsHGm51j4GtpA3mFguNv065" }
+                                ]
+                                }
+                            ]
+                            DEFINITION ")
                         def taskRevision = sh(script: "/usr/local/bin/aws ecs describe-task-definition --task-definition ${AWS_ECS_TASK_DEFINITION} | egrep \"revision\" | tr \"/\" \" \" | awk '{print \$2}' | sed 's/\"\$//'", returnStdout: true)
-                        sh("/usr/local/bin/aws ecs update-service --cluster ${AWS_ECS_CLUSTER} --service ${AWS_ECS_SERVICE} --task-definition ${AWS_ECS_TASK_DEFINITION}")
+                        sh("/usr/local/bin/aws ecs update-service \
+                            --cluster ${AWS_ECS_CLUSTER} \
+                            --service ${AWS_ECS_SERVICE} \
+                            --task-definition ${AWS_ECS_TASK_DEFINITION}")
                         // :${taskRevision}
                     }
                 }
             }
         }
-        // stage('test aws cli') {
-        //     steps {
-        //         withCredentials([[
-        //             $class: 'AmazonWebServicesCredentialsBinding',
-        //             credentialsId: 'aws_creds',
-        //             // credentialsId: env.AWS_CREDENTIAL_ID,
-        //             ACCESS_KEY: 'ACCESS_KEY', SECRET_KEY: 'SECRET_KEY'
-        //             ]]) { 
-        //             sh aws 
-        //         }
-        //     }
-        // }
-        // stage('testdockrecs') {
-        //     agent { label 'ECS_agent_template1'}
-        //         steps {
-        //             echo 'Running build'
-        //         }
-        // }
-        
-        // stage('docker launch') {
-        //     agent {
-        //         ecs {
-        //             label 'ag1'
-        //             cloud 'what-backend-vpc'
-        //             // 'label-of-my-preconfigured-template':
-        //             // inheritFrom 'what2'
-        //             launchType 'FARGATE'
-        //             cpu 256
-        //             memory 512
-        //             // sudo yum install nodejs npm --enablerepo=epel
-        //             // label 'what-backend-vpc'
-        //             image '934086672967.dkr.ecr.eu-central-1.amazonaws.com/what-backend-release-ecr'
-        //             // image '$AWS_ACCOUNT.dkr.ecr.$AWS_REGION.amazonaws.com/jenkins/java8:2019.7.29-1'
-        //             // logDriver 'fluentd'
-        //             // logDriverOptions([[name: 'foo', value:'bar'], [name: 'bar', value: 'foo']])
-        //             portMappings([[containerPort: 80, hostPort: 80, protocol: 'tcp'], [containerPort: 5000, hostPort: 5000, protocol: 'tcp'], [containerPort: 5001, hostPort: 5001, protocol: 'tcp']])
-        //         }
-        //     }
-        //     steps {
-        //         sh 'echo hello'
-        //     }
-        // }
     }
 }
+//                             --container-definitions file://${AWS_ECS_TASK_DEFINITION_PATH}
