@@ -24,7 +24,9 @@
         { "name" : "Cookies__SecureKey", 
           "value" : "MyVerySecretKey" },
         { "name" : "ASPNETCORE_ENVIRONMENT",
-          "value" : "prod"}
+          "value" : "prod"},
+        { "name" : "APIURL",
+          "value" : "url_api"}
     ]
     }
 ]

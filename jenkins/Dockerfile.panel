@@ -7,6 +7,7 @@ WORKDIR /source/CharlieBackend.Panel
 RUN dotnet build ./CharlieBackend.Panel.csproj --configuration Release
 RUN dotnet publish -c release -o /app --no-restore
 RUN touch /app/.env
+RUN ls
 COPY jenkins/ecs/entrypoint.sh /app/entrypoint.sh
      
 

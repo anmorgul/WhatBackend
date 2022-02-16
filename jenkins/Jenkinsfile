@@ -22,6 +22,7 @@ pipeline {
         DB_USERNAME = 'DB_USERNAME'
         DB_PASSWORD = 'DB_PASSWORD'
         DATABASE = 'soft'
+        APIURL = "http://147.258.369.102"
     }
 	agent { label 'nodejs'}
 // { label 'nodejs'}
@@ -81,6 +82,7 @@ pipeline {
         stage("docker build panel and push to ecr") {
 			steps {
                 script {
+                    sh "ls"
                     sh 'docker image prune -a -f'
                     sh "cp ./jenkins/Dockerfile.panel ./Dockerfile"
                     TAG = sh (
@@ -109,6 +111,8 @@ pipeline {
                         sh "sed -i 's/DATABASE/${DATABASE}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
                         sh "sed -i 's/DB_PASSWORD/${DB_PASSWORD}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
                         sh "sed -i 's/DB_USERNAME/${DB_USERNAME}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
+                        sh "sed -i 's/url_api/${APIURL}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
+                        
                         sh '''
                             /usr/local/bin/aws ecs register-task-definition \
                                 --region ${AWS_ECR_REGION} \
