@@ -9,7 +9,7 @@
       ],
       "cpu": 256,
       "memory": 512,
-      "image": "934086672967.dkr.ecr.eu-central-1.amazonaws.com/what-backend-release-ecr:67330ff",
+      "image": "934086672967.dkr.ecr.eu-central-1.amazonaws.com/what-backend-release-ecr:containerTag",
       "essential": true,
       "name": "what-backend-release-container",
       "environment" : [
