@@ -42,6 +42,8 @@ pipeline {
                             --db-instance-identifier mysqlinstance \
                             --query "DBInstances[*].[DBInstanceIdentifier,Endpoint]"')
                         sh "echo ${rdbjson2}"
+                        sh "echo ${rdbjson2['mysqlinstance']}"
+                        sh "echo ${rdbjson2}['mysqlinstance']"
                     }
                 }
             }
