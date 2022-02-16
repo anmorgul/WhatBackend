@@ -39,13 +39,13 @@ pipeline {
             steps {
                 withAWS(credentials: 'aws_creds', region: 'eu-central-1') {
                     script {
-                        def rdbjson2 = sh('/usr/local/bin/aws rds describe-db-instances \
+                        def rdbjson2 = sh(script: "/usr/local/bin/aws rds describe-db-instances \
                             --region eu-central-1 \
                             --db-instance-identifier mysqlinstance \
-                            --query "DBInstances[*].[DBInstanceIdentifier,Endpoint]"')
+                            --query 'DBInstances[*].[DBInstanceIdentifier,Endpoint]'", returnStdout: true)
                         sh "echo ${rdbjson2}"
                         def jsonObj = readJSON text: rdbjson2
-                        sh "echo ${jsonObj} | grep 'mysqlinstance'"
+                        sh "echo ${jsonObj[0]}"
                         sh "echo ${rdbjson2}"
                     }
                 }
