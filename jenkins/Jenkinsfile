@@ -28,7 +28,7 @@ pipeline {
                 withAWS(credentials: 'aws_creds', region: 'eu-central-1') {
                     script {
                                             
-                        def rdbjson = sh(script: "/usr/local/bin/aws rds describe-db-instances --query '*[].[DBInstanceIdentifier,Endpoint.Address,Endpoint.Port,MasterUsername]'")
+                        def rdbjson = sh(script: "/usr/local/bin/aws rds describe-db-instances --query '*[].[DBInstanceIdentifier,Endpoint.Address,Endpoint.Port,MasterUsername]'", returnStdout: true)
                         sh "echo ${rdbjson}"
                     }
                 }
@@ -41,7 +41,7 @@ pipeline {
                         def rdbjson2 = sh('/usr/local/bin/aws rds describe-db-instances \
                             --region eu-central-1 \
                             --db-instance-identifier mysqlinstance \
-                            --query "DBInstances[*].[DBInstanceIdentifier,Endpoint]"[0]')
+                            --query "DBInstances[*].[DBInstanceIdentifier,Endpoint]"')
                         sh "echo ${rdbjson2}"
                         def jsonObj = readJSON text: rdbjson2
                         sh "echo ${jsonObj} | grep 'mysqlinstance'"
