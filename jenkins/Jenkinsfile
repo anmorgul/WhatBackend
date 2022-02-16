@@ -28,7 +28,7 @@ pipeline {
                 withAWS(credentials: 'aws_creds', region: 'eu-central-1') {
                     script {
                                             
-                        def rdbjson = sh(script: "/usr/local/bin/aws rds describe-db-instances --query '*[].[DBInstanceIdentifier,Endpoint.Address,Endpoint.Port,MasterUsername]'", returnStdout: true)
+                        def rdbjson = sh(script: "/usr/local/bin/aws rds describe-db-instances --query '*[].[DBInstanceIdentifier,Endpoint.Address,Endpoint.Port,MasterUsername]'")
                         sh "echo ${rdbjson}"
                     }
                 }
