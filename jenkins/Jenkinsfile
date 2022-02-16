@@ -83,7 +83,7 @@ pipeline {
                                 --container-definitions file://${AWS_ECS_TASK_DEFINITION_PATH} 
                         '''
                         def taskRevision = sh(script: "/usr/local/bin/aws ecs describe-task-definition --task-definition ${AWS_ECS_TASK_DEFINITION} | egrep \"revision\" | tr \"/\" \" \" | awk '{print \$2}' | sed 's/\"\$//'", returnStdout: true)
-                        def taskRevision2 = sh(script: "/usr/local/bin/aws ecs describe-task-definition --task-definition ${AWS_ECS_TASK_DEFINITION} | egrep \"revision\" )
+                        def taskRevision2 = sh(script: "/usr/local/bin/aws ecs describe-task-definition --task-definition ${AWS_ECS_TASK_DEFINITION} | egrep \"revision\"" )
 
                         sh "echo ${taskRevision}"
                         sh "echo ${taskRevision2}"
