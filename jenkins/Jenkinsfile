@@ -83,8 +83,8 @@ pipeline {
                                 --container-definitions file://${AWS_ECS_TASK_DEFINITION_PATH} 
                         '''
                         def taskRevision = sh(script: "/usr/local/bin/aws ecs describe-task-definition --task-definition ${AWS_ECS_TASK_DEFINITION} | egrep \"revision\" | tr \"/\" \" \" | awk '{print \$2}' | sed 's/\"\$//'", returnStdout: true)
-                        def taskRevision2 = sh(script: "/usr/local/bin/aws ecr describe-images --repository-name 'what-backend-release-ecr' --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]'", returnStdout: true)
-                        sh "echo ${containerTag}"
+                        def containerTag = sh(script: "/usr/local/bin/aws ecr describe-images --repository-name 'what-backend-release-ecr' --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]'", returnStdout: true)
+                        sh "echo ${taskRevision}"
                         sh "echo ${containerTag}"
                         sh("/usr/local/bin/aws ecs update-service \
                             --cluster ${AWS_ECS_CLUSTER} \
