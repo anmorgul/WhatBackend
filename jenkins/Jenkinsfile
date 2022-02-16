@@ -29,7 +29,8 @@ pipeline {
                     script {
                                             
                         def rdbjson = sh(script: "/usr/local/bin/aws rds describe-db-instances --query '*[].[DBInstanceIdentifier,Endpoint.Address,Endpoint.Port,MasterUsername]'", returnStdout: true)
-                        sh "echo ${rdbjson}"
+                        def jsonObj = readJSON text: rdbjson
+                        sh "echo ${jsonObj}"
                     }
                 }
             }
