@@ -45,7 +45,7 @@ pipeline {
                             --query 'DBInstances[*].[DBInstanceIdentifier,Endpoint]'", returnStdout: true)
                         def jsonObj2 = readJSON text: rdbjson2
                         sh "echo ${jsonObj2[0]}"
-                        sh "echo ${jsonObj2[0]]['mysqlinstance']}"
+                        sh "echo ${jsonObj2[0]['mysqlinstance']}"
                     }
                 }
             }
