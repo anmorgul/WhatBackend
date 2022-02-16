@@ -11,14 +11,10 @@
       "memory": 512,
       "image": "934086672967.dkr.ecr.eu-central-1.amazonaws.com/what-backend-release-panel-ecr:containerTag",
       "essential": true,
-      "name": "what-backend-release-container",
+      "name": "what-backend-release-panel-container",
       "environment" : [
-        { "name" : "AuthOptions__KEY", 
-          "value" : "mysupersecret_secretkey!123" },
-        { "name" : "ConnectionStrings__DefaultConnection", 
-          "value" : "server=mysqlinstance.cgdizvert0bq.eu-central-1.rds.amazonaws.com;port=3306;UserId=DB_USERNAME;Password=DB_PASSWORD;database=soft;Allow User Variables=true" },
-        { "name" : "ConnectionStrings__RabbitMQ", 
-          "value" : "host=qkangaroo.rmq.cloudamqp.com;virtualHost=cfhrvrrt;username=cfhrvrrt;password=yYvcHUcFxTsHGm51j4GtpA3mFguNv065" }
+        { "name" : "Cookies__SecureKey", 
+          "value" : "MyVerySecretKey" }
     ]
     }
 ]
