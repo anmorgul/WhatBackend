@@ -40,7 +40,7 @@ pipeline {
                         def rdbjson2 = sh('/usr/local/bin/aws rds describe-db-instances \
                             --region eu-central-1 \
                             --db-instance-identifier mysqlinstance \
-                            --query "DBInstances[*].[DBInstanceIdentifier,Endpoint]"')
+                            --query "DBInstances[*].[DBInstanceIdentifier,Endpoint]"[0]')
                         sh "echo ${rdbjson2}"
                         def jsonObj = readJSON text: rdbjson2
                         sh "echo ${jsonObj} | grep 'mysqlinstance'"
