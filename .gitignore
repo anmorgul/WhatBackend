@@ -603,7 +603,7 @@ dist
 
 
 Makefile
-Dockerfile.api
-Dockerfile.panel
+# Dockerfile.api
+# Dockerfile.panel
 .env
 env
