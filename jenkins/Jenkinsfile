@@ -55,8 +55,8 @@ pipeline {
                             --db-instance-identifier mysqlinstance \
                             --query 'DBInstances[*].[DBInstanceIdentifier,Endpoint]'", returnStdout: true)
                         def jsonObj2 = readJSON text: rdbjson2
-                        env.rdburl = sh(script: "echo ${jsonObj2[0][1].Address}", returnStdout: true)
-                        env.rdbport = sh(script: "echo ${jsonObj2[0][1].Port}", returnStdout: true)
+                        env.rdburl = sh(script: "echo ${jsonObj2[0][1].Address}", returnStdout: true).trim()
+                        env.rdbport = sh(script: "echo ${jsonObj2[0][1].Port}", returnStdout: true).trim()
                         sh "echo rdb Address = ${rdburl}"
                         sh "echo rdb Port = ${rdbport}"
                     }
