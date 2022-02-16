@@ -26,8 +26,10 @@ pipeline {
         stage("rdb") {
             steps {
                 script {
-                    aws rds describe-db-instances \
-                        --query "*[].[DBInstanceIdentifier,Endpoint.Address,Endpoint.Port,MasterUsername]"
+                    sh '''
+                        /usr/local/bin/aws rds describe-db-instances \
+                            --query "*[].[DBInstanceIdentifier,Endpoint.Address,Endpoint.Port,MasterUsername]"
+                    '''
                 }
             }
         }
