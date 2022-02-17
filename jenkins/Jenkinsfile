@@ -27,7 +27,7 @@ pipeline {
         DB_USERNAME = 'DB_USERNAME'
         DB_PASSWORD = 'DB_PASSWORD'
         DATABASE = 'soft'
-        APIURL = "http://api.whatdp.pp.ua"
+        APIURL = "api.whatdp.pp.ua"
         rdburl = ""
         rdbport = ""
     }
