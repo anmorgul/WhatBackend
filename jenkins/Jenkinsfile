@@ -27,7 +27,7 @@ pipeline {
         DB_USERNAME = 'DB_USERNAME'
         DB_PASSWORD = 'DB_PASSWORD'
         DATABASE = 'soft'
-        APIURL = "http://api.whatdp.pp.ua/index.html"
+        APIURL = "http://api.whatdp.pp.ua"
         rdburl = ""
         rdbport = ""
     }
@@ -66,47 +66,47 @@ pipeline {
                 }
             }
         }
-        // stage("docker build api and push to ecr") {
-		// 	steps {
-        //         script {
-        //             sh 'docker image prune -a -f'
-        //             sh "cp ./jenkins/Dockerfile.api ./Dockerfile"
-        //             TAG = sh (
-        //                 script: 'git log -1 --pretty=%h',
-        //                 returnStdout: true
-        //             ).trim()
-        //             docker.withRegistry(
-        //                 'https://934086672967.dkr.ecr.eu-central-1.amazonaws.com',
-        //                 'ecr:eu-central-1:aws_creds') {
-        //                     def myImage = docker.build('what-backend-release-ecr')
-        //                 myImage.push(TAG)
-        //             }
-        //         }
-        //     }
-        // }
+        stage("docker build api and push to ecr") {
+			steps {
+                script {
+                    sh 'docker image prune -a -f'
+                    sh "cp ./jenkins/Dockerfile.api ./Dockerfile"
+                    TAG = sh (
+                        script: 'git log -1 --pretty=%h',
+                        returnStdout: true
+                    ).trim()
+                    docker.withRegistry(
+                        'https://934086672967.dkr.ecr.eu-central-1.amazonaws.com',
+                        'ecr:eu-central-1:aws_creds') {
+                            def myImage = docker.build('what-backend-release-ecr')
+                        myImage.push(TAG)
+                    }
+                }
+            }
+        }
 
-//
-        // stage("docker build panel and push to ecr") {
-		// 	steps {
-        //         script {
-        //             sh "ls"
-        //             sh 'docker image prune -a -f'
-        //             sh "cp ./jenkins/Dockerfile.panel ./Dockerfile"
-        //             sh "cp ./jenkins/entrypoint.sh ./entrypoint.sh"
 
-        //             TAG = sh (
-        //                 script: 'git log -1 --pretty=%h',
-        //                 returnStdout: true
-        //             ).trim()
-        //             docker.withRegistry(
-        //                 'https://934086672967.dkr.ecr.eu-central-1.amazonaws.com',
-        //                 'ecr:eu-central-1:aws_creds') {
-        //                     def myImage = docker.build('what-backend-release-panel-ecr')
-        //                 myImage.push(TAG)
-        //             }
-        //         }
-        //     }
-        // }
+        stage("docker build panel and push to ecr") {
+			steps {
+                script {
+                    sh "ls"
+                    sh 'docker image prune -a -f'
+                    sh "cp ./jenkins/Dockerfile.panel ./Dockerfile"
+                    sh "cp ./jenkins/entrypoint.sh ./entrypoint.sh"
+
+                    TAG = sh (
+                        script: 'git log -1 --pretty=%h',
+                        returnStdout: true
+                    ).trim()
+                    docker.withRegistry(
+                        'https://934086672967.dkr.ecr.eu-central-1.amazonaws.com',
+                        'ecr:eu-central-1:aws_creds') {
+                            def myImage = docker.build('what-backend-release-panel-ecr')
+                        myImage.push(TAG)
+                    }
+                }
+            }
+        }
 //
         stage('Deploy api in ECS') {
             steps {
