@@ -20,6 +20,7 @@ pipeline {
         AWS_ECS_TASK_DEFINITION_PATH = './jenkins/ecs/container-definition-update-image.json'
         AWS_ECS_PANEL_TASK_DEFINITION_PATH = './jenkins/ecs/container-definition-update-image-panel.json'
         AWS_ECS_CLUSTER = 'what-backend-release-cluster'
+        AWS_ECS_PANEL_CLUSTER = 'what-backend-release-cluster-panel'
         AWS_ECS_SERVICE = 'what-backend-release-ecs-service'
         AWS_ECS_PANEL_SERVICE = 'what-backend-release-ecs-panel-service'
         AWS_ECR_URL = '934086672967.dkr.ecr.eu-central-1.amazonaws.com/what-backend-release-ecr'
@@ -169,7 +170,7 @@ pipeline {
                         '''
                         def taskRevision = sh(script: "/usr/local/bin/aws ecs describe-task-definition --task-definition ${AWS_ECS_TASK_DEFINITION} | egrep \"revision\" | tr \"/\" \" \" | awk '{print \$2}' | sed 's/\"\$//'", returnStdout: true)
                         sh("/usr/local/bin/aws ecs update-service \
-                            --cluster ${AWS_ECS_CLUSTER} \
+                            --cluster ${AWS_ECS_PANEL_CLUSTER} \
                             --service ${AWS_ECS_PANEL_SERVICE} \
                             --task-definition ${AWS_ECS_PANEL_TASK_DEFINITION}")
                         // :${taskRevision}
