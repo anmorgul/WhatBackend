@@ -66,24 +66,24 @@ pipeline {
                 }
             }
         }
-        stage("docker build api and push to ecr") {
-			steps {
-                script {
-                    sh 'docker image prune -a -f'
-                    sh "cp ./jenkins/Dockerfile.api ./Dockerfile"
-                    TAG = sh (
-                        script: 'git log -1 --pretty=%h',
-                        returnStdout: true
-                    ).trim()
-                    docker.withRegistry(
-                        'https://934086672967.dkr.ecr.eu-central-1.amazonaws.com',
-                        'ecr:eu-central-1:aws_creds') {
-                            def myImage = docker.build('what-backend-release-ecr')
-                        myImage.push(TAG)
-                    }
-                }
-            }
-        }
+        // stage("docker build api and push to ecr") {
+		// 	steps {
+        //         script {
+        //             sh 'docker image prune -a -f'
+        //             sh "cp ./jenkins/Dockerfile.api ./Dockerfile"
+        //             TAG = sh (
+        //                 script: 'git log -1 --pretty=%h',
+        //                 returnStdout: true
+        //             ).trim()
+        //             docker.withRegistry(
+        //                 'https://934086672967.dkr.ecr.eu-central-1.amazonaws.com',
+        //                 'ecr:eu-central-1:aws_creds') {
+        //                     def myImage = docker.build('what-backend-release-ecr')
+        //                 myImage.push(TAG)
+        //             }
+        //         }
+        //     }
+        // }
 
 
         stage("docker build panel and push to ecr") {
@@ -108,46 +108,46 @@ pipeline {
             }
         }
 //
-        stage('Deploy api in ECS') {
-            steps {
-                withAWS(credentials: 'aws_creds', region: 'eu-central-1') {
-                    script {
-                        def containerTag = sh(script: "/usr/local/bin/aws ecr describe-images --repository-name 'what-backend-release-ecr' --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' --output text", returnStdout: true).trim()
-                        // def containerTag = containerTag.trim()
-                        sh "echo rdb Address"
-                        sh "echo rdb Address = ${rdburl}"
-                        sh "echo rdb Port"
-                        sh "echo rdb Port = ${rdbport}"
-                        sh "echo cont"
-                        sh "sed -i 's/containerTag/${containerTag}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
-                        sh "sed -i 's/rdburl/${rdburl}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
-                        sh "sed -i 's/rdbport/${rdbport}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
-                        sh "sed -i 's/DATABASE/${DATABASE}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
-                        sh "sed -i 's/DB_PASSWORD/${DB_PASSWORD}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
-                        sh "sed -i 's/DB_USERNAME/${DB_USERNAME}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
+        // stage('Deploy api in ECS') {
+        //     steps {
+        //         withAWS(credentials: 'aws_creds', region: 'eu-central-1') {
+        //             script {
+        //                 def containerTag = sh(script: "/usr/local/bin/aws ecr describe-images --repository-name 'what-backend-release-ecr' --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' --output text", returnStdout: true).trim()
+        //                 // def containerTag = containerTag.trim()
+        //                 sh "echo rdb Address"
+        //                 sh "echo rdb Address = ${rdburl}"
+        //                 sh "echo rdb Port"
+        //                 sh "echo rdb Port = ${rdbport}"
+        //                 sh "echo cont"
+        //                 sh "sed -i 's/containerTag/${containerTag}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
+        //                 sh "sed -i 's/rdburl/${rdburl}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
+        //                 sh "sed -i 's/rdbport/${rdbport}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
+        //                 sh "sed -i 's/DATABASE/${DATABASE}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
+        //                 sh "sed -i 's/DB_PASSWORD/${DB_PASSWORD}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
+        //                 sh "sed -i 's/DB_USERNAME/${DB_USERNAME}/' ${AWS_ECS_TASK_DEFINITION_PATH} "
                         
                         
-                        sh '''
-                            /usr/local/bin/aws ecs register-task-definition \
-                                --region ${AWS_ECR_REGION} \
-                                --family ${AWS_ECS_TASK_DEFINITION} \
-                                --execution-role-arn ${AWS_ECS_EXECUTION_ROL} \
-                                --requires-compatibilities ${AWS_ECS_COMPATIBILITY} \
-                                --network-mode ${AWS_ECS_NETWORK_MODE} \
-                                --cpu ${AWS_ECS_CPU} \
-                                --memory ${AWS_ECS_MEMORY} \
-                                --container-definitions file://${AWS_ECS_TASK_DEFINITION_PATH} 
-                        '''
-                        def taskRevision = sh(script: "/usr/local/bin/aws ecs describe-task-definition --task-definition ${AWS_ECS_TASK_DEFINITION} | egrep \"revision\" | tr \"/\" \" \" | awk '{print \$2}' | sed 's/\"\$//'", returnStdout: true)
-                        sh("/usr/local/bin/aws ecs update-service \
-                            --cluster ${AWS_ECS_CLUSTER} \
-                            --service ${AWS_ECS_SERVICE} \
-                            --task-definition ${AWS_ECS_TASK_DEFINITION}")
-                        // :${taskRevision}
-                    }
-                }
-            }
-        }
+        //                 sh '''
+        //                     /usr/local/bin/aws ecs register-task-definition \
+        //                         --region ${AWS_ECR_REGION} \
+        //                         --family ${AWS_ECS_TASK_DEFINITION} \
+        //                         --execution-role-arn ${AWS_ECS_EXECUTION_ROL} \
+        //                         --requires-compatibilities ${AWS_ECS_COMPATIBILITY} \
+        //                         --network-mode ${AWS_ECS_NETWORK_MODE} \
+        //                         --cpu ${AWS_ECS_CPU} \
+        //                         --memory ${AWS_ECS_MEMORY} \
+        //                         --container-definitions file://${AWS_ECS_TASK_DEFINITION_PATH} 
+        //                 '''
+        //                 def taskRevision = sh(script: "/usr/local/bin/aws ecs describe-task-definition --task-definition ${AWS_ECS_TASK_DEFINITION} | egrep \"revision\" | tr \"/\" \" \" | awk '{print \$2}' | sed 's/\"\$//'", returnStdout: true)
+        //                 sh("/usr/local/bin/aws ecs update-service \
+        //                     --cluster ${AWS_ECS_CLUSTER} \
+        //                     --service ${AWS_ECS_SERVICE} \
+        //                     --task-definition ${AWS_ECS_TASK_DEFINITION}")
+        //                 // :${taskRevision}
+        //             }
+        //         }
+        //     }
+        // }
 //
         stage('Deploy panel in ECS') {
             steps {
