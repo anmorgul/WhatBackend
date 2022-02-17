@@ -26,7 +26,7 @@ pipeline {
         DB_USERNAME = 'DB_USERNAME'
         DB_PASSWORD = 'DB_PASSWORD'
         DATABASE = 'soft'
-        APIURL = "http://18.195.199.116:80"
+        APIURL = "52.59.195.89:80"
         rdburl = ""
         rdbport = ""
     }
